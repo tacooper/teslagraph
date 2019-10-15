@@ -4,6 +4,7 @@ import requests
 import sys
 
 # define constants
+API_URL = "https://owner-api.teslamotors.com/oauth/token"
 CLIENT_ID = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384"
 CLIENT_SECRET = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
 
@@ -38,7 +39,17 @@ class Authentication:
 
     def send_request(self, request_data):
         # send request to get response with access token
-        response = requests.post("https://owner-api.teslamotors.com/oauth/token", data=request_data).json()
+        result = requests.post(API_URL, data=request_data)
+        if not result.ok:
+            # handle error code for invalid response
+            print(result)
+
+        # get JSON for in/valid response
+        try:
+            response = result.json()
+        except:
+            return
+
         if "error_description" in response:
             # handle response for invalid request
             print(response["error_description"])
