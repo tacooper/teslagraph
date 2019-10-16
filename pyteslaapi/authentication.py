@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import requests
-import sys
 
 # define constants
 API_URL = "https://owner-api.teslamotors.com/oauth/token"
