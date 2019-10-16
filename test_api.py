@@ -8,6 +8,7 @@ def run_tests(args):
     authentication = Authentication()
     if args.init_refresh_token:
         # use email/password to get refresh token for account
+        print("Sending request for initial authentication...")
         email = "email"
         password = "password"
         authentication.send_initial_request(email, password)
@@ -17,13 +18,16 @@ def run_tests(args):
             authentication.save_refresh_token()
 
     # load valid refresh token to get access token for account (and update saved refresh token)
+    print("Sending request for refresh authentication...")
     authentication.load_refresh_token()
     authentication.send_refresh_request()
     authentication.save_refresh_token()
 
     # use access token to get list of vehicles for account
+    print("Sending request for vehicles list...")
     vehicles = Vehicles(authentication.headers)
     vehicles.send_list_request()
+    print("Vehicle[0]: " + str(vehicles.vehicle_list[0]))
 
 if __name__ == "__main__":
     # parse command line arguments
