@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
-from pyteslaapi import *
+from pyteslaapi import Authentication, Vehicles, State
 
 def run_tests(args):
     # optionally initialize refresh token
@@ -12,6 +12,7 @@ def run_tests(args):
         email = "email"
         password = "password"
         authentication.send_initial_request(email, password)
+        print()
 
         # save valid refresh token to file
         if authentication.refresh_token is not None:
@@ -22,13 +23,16 @@ def run_tests(args):
     authentication.load_refresh_token()
     authentication.send_refresh_request()
     authentication.save_refresh_token()
+    print()
 
     # use access token to get list of vehicles for account
     print("Sending request for vehicles list...")
     vehicles = Vehicles(authentication.headers)
     vehicles.send_list_request()
-    vehicle_0 = vehicles.vehicle_list[0]
-    print("Vehicle[0]: " + str(vehicle_0))
+    vehicle_0 = vehicles.get_vehicle(0)
+    print("Vehicle 0:")
+    print(str(vehicle_0))
+    print()
 
 if __name__ == "__main__":
     # parse command line arguments

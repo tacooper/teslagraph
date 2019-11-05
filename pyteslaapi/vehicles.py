@@ -22,7 +22,7 @@ class Vehicle:
 
     # prints all details for vehicle
     def __str__(self):
-        return """\r\n\
+        return """\
     name:       {}\r\n\
     id:         {}\r\n\
     vin:        {}\r\n\
@@ -34,15 +34,19 @@ class Vehicle:
 class Vehicles:
     def __init__(self, headers):
         self.headers = headers
-        self.vehicle_list = []
+        self.vehicle_map = {}
+
+    def get_vehicle(self, index):
+        id = list(self.vehicle_map)[index]
+        return self.vehicle_map[id]
 
     def send_list_request(self):
         # send request to get response with list of vehicles
         result = requests.get(API_URL, headers=self.headers)
         response = common.handle_result(result)
         if response:
-            # store details of each vehicle in list
-            self.vehicle_list = []
+            # clear and store details of each vehicle
+            self.vehicle_map = {}
             for item in response["response"]:
                 vehicle = Vehicle()
                 vehicle.name = item["display_name"]
@@ -50,4 +54,4 @@ class Vehicles:
                 vehicle.vin = item["vin"]
                 vehicle.state = State(item["state"])
                 vehicle.in_service = item["in_service"]
-                self.vehicle_list.append(vehicle)
+                self.vehicle_map[str(vehicle.id)] = vehicle

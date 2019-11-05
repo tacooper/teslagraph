@@ -2,6 +2,7 @@
 
 import pyteslaapi.common as common
 import requests
+import time
 
 # define constants
 API_URL = "https://owner-api.teslamotors.com/oauth/token"
@@ -60,3 +61,4 @@ class Authentication:
             self.headers = {
                 "Authorization": "Bearer " + response["access_token"]
             }
+            print("Token refreshed at: \"" + time.ctime(response["created_at"]) + "\"")
