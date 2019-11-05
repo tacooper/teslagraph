@@ -13,7 +13,8 @@ class State(Enum):
 
 # container for details about single vehicle
 class Vehicle:
-    def __init__(self):
+    def __init__(self, headers):
+        self.headers = headers
         self.name = None
         self.id = None
         self.vin = None
@@ -27,8 +28,32 @@ class Vehicle:
     id:         {}\r\n\
     vin:        {}\r\n\
     state:      {}\r\n\
-    in_service: {}\r\n\
-    """.format(self.name, self.id, self.vin, self.state, self.in_service)
+    in_service: {}""".format(self.name, self.id, self.vin, self.state, self.in_service)
+
+    def update(self, response_item):
+        self.name = response_item["display_name"]
+        self.id = response_item["id"]
+        self.vin = response_item["vin"]
+        self.state = State(response_item["state"])
+        self.in_service = response_item["in_service"]
+
+    def send_wake_up_request(self):
+        # send request to wake up specific vehicle
+        URL = API_URL + "/{}/wake_up".format(self.id)
+        result = requests.post(URL, headers=self.headers)
+        response = common.handle_result(result)
+        if response:
+            # update vehicle with response fields
+            self.update(response["response"])
+
+    def send_vehicle_data_request(self):
+        # send request to get response with all data for specific vehicle
+        URL = API_URL + "/{}/vehicle_data".format(self.id)
+        result = requests.get(URL, headers=self.headers)
+        response = common.handle_result(result)
+        if response:
+            # TODO: handle all data in response
+            print(response)
 
 # uses headers with access token to obtain list of vehicles
 class Vehicles:
@@ -48,10 +73,6 @@ class Vehicles:
             # clear and store details of each vehicle
             self.vehicle_map = {}
             for item in response["response"]:
-                vehicle = Vehicle()
-                vehicle.name = item["display_name"]
-                vehicle.id = item["id"]
-                vehicle.vin = item["vin"]
-                vehicle.state = State(item["state"])
-                vehicle.in_service = item["in_service"]
+                vehicle = Vehicle(self.headers)
+                vehicle.update(item)
                 self.vehicle_map[str(vehicle.id)] = vehicle

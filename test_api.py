@@ -25,7 +25,7 @@ def run_tests(args):
     authentication.save_refresh_token()
     print()
 
-    # use access token to get list of vehicles for account
+    # use access token to get list of vehicles for account (and get first vehicle)
     print("Sending request for vehicles list...")
     vehicles = Vehicles(authentication.headers)
     vehicles.send_list_request()
@@ -33,6 +33,16 @@ def run_tests(args):
     print("Vehicle 0:")
     print(str(vehicle_0))
     print()
+
+    # wake up vehicle if asleep
+    if vehicle_0.state == State.ASLEEP:
+        vehicle_0.send_wake_up_request()
+        print()
+
+    # get all data for vehicle if awake
+    if vehicle_0.state == State.ONLINE:
+        vehicle_0.send_vehicle_data_request()
+        print()
 
 if __name__ == "__main__":
     # parse command line arguments
