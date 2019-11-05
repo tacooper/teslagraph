@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import pyteslaapi.common as common
 import requests
 
 # define constants
@@ -52,23 +53,8 @@ class Authentication:
     def send_request(self, request_data):
         # send request to get response with access token
         result = requests.post(API_URL, data=request_data)
-        if not result.ok:
-            # handle error code for invalid response
-            print(result)
-
-        # get JSON for in/valid response
-        try:
-            response = result.json()
-        except:
-            return
-
-        if "error_description" in response:
-            # handle response for invalid request
-            print(response["error_description"])
-        elif "response" in response:
-            # handle response for invalid request
-            print(response["response"])
-        else:
+        response = common.handle_result(result)
+        if response:
             # store refresh token and authorization headers for API calls
             self.refresh_token = response["refresh_token"]
             self.headers = {

@@ -27,7 +27,8 @@ def run_tests(args):
     print("Sending request for vehicles list...")
     vehicles = Vehicles(authentication.headers)
     vehicles.send_list_request()
-    print("Vehicle[0]: " + str(vehicles.vehicle_list[0]))
+    vehicle_0 = vehicles.vehicle_list[0]
+    print("Vehicle[0]: " + str(vehicle_0))
 
 if __name__ == "__main__":
     # parse command line arguments

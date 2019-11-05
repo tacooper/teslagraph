@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from enum import Enum
+import pyteslaapi.common as common
 import requests
 
 # define constants
@@ -38,20 +39,8 @@ class Vehicles:
     def send_list_request(self):
         # send request to get response with list of vehicles
         result = requests.get(API_URL, headers=self.headers)
-        if not result.ok:
-            # handle error code for invalid response
-            print(result)
-
-        # get JSON for in/valid response
-        try:
-            response = result.json()
-        except:
-            return
-
-        if "error_description" in response:
-            # handle response for invalid request
-            print(response["error_description"])
-        else:
+        response = common.handle_result(result)
+        if response:
             # store details of each vehicle in list
             self.vehicle_list = []
             for item in response["response"]:
